@@ -88,7 +88,12 @@ python main.py --train --model ./Model/EfficientNetV2.pt --momentum 0.5 --batch_
 
 ### Testing
 ```bash
-python main.py --test -- batch_size 12 --model ./Model/WATT_EffNet.pt --checkpoint ./Best_weight/WATT_EffNET2.pt
+python main.py --test --batch_size 12 --model ./Model/WATT_EffNet.pt --checkpoint ./Best_weight/WATT_EffNET2.pt
+```
+
+### Classify
+```bash
+python main.py --classify  --model ./Model/WATT_EffNet.pt --checkpoint ./Best_weight/WATT_EffNET2.pt --image 1.jpg
 ```
 
 ## Contact

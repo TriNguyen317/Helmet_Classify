@@ -10,6 +10,9 @@ from MBConvBlock import MBConvBlock
 import argparse
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+from PIL import Image
+import numpy as np 
+
 # nvidia-smi -l
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -195,6 +198,13 @@ def Test_model(args, model, test_data):
     accuracy = num_right_label/num_test
     print("Accuracy: ", accuracy)
 
+def Test_image(args, model, test_img):
+    pred = model(test_img.to(device))
+    output = nn.Softmax(dim=1)(pred)[0]
+    print(pred)
+    _, classes = torch.max(output,dim=0)
+    res = "Helmet" if classes==1 else "No-helmet" 
+    print("Result: ", res)
 
 if __name__ == "__main__":
     """
@@ -210,7 +220,8 @@ if __name__ == "__main__":
         lr (float): Learning rate. Default: 0.0001
         momentum (float): Momentum for optimizer. Default: 0.8
         train (bool): Task is training. Default: False
-        test (bool): Task is testing. Default: False
+        test_model (bool): Task is testing. Default: False
+        test_model (bool): Task is testing. Default: False
     """
     parser = argparse.ArgumentParser(prog="Helmet_classify", 
                                      epilog='Text at the bottom of help')
@@ -237,7 +248,11 @@ if __name__ == "__main__":
     parser.add_argument("--train", type=bool, action=argparse.BooleanOptionalAction,
                     default=False, help="Training with a checkpoint file")
     parser.add_argument("--test", type=bool, action=argparse.BooleanOptionalAction,
-                default=False, help="Training with a checkpoint file")
+                default=False, help="Test model by test_dir")
+    parser.add_argument("--classify", type=bool, action=argparse.BooleanOptionalAction,
+                default=True, help="Classify image")
+    parser.add_argument("--image", type=str,
+                default="1.jpg", help="Task is classify image")
 
     args = parser.parse_args()
     
@@ -259,5 +274,13 @@ if __name__ == "__main__":
     print("State: ", State)
     if args.train:
         Training_model(args, model, train_data, valid_data)
+    elif args.classify:
+        image = Image.open(args.image)
+        resize = (args.img_size, args.img_size)
+        resized_image = image.resize(resize)
+        image = torch.tensor(np.array(resized_image),dtype=torch.float).reshape((1,3,resize[0], resize[1]))
+        Test_image(args,model,image)
     else:
-        Test_model(args,model, test_data)
+        Test_model(args, model, test_data)
+        
+    
