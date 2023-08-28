@@ -33,6 +33,35 @@ This project focuses o helmet classify in images and videos using computer visio
    - Model and pre_trained of WATT_EffNet are existing in the `Model` and `Best_weight`
    - Model and pre_trained EfficientNetV2 are downloaded by using torchvision library 
 
+### Data:
+```
+- train
+   - NameClass1
+      - 1.jpg
+      - 2.jpg
+      - train
+   - NameClass2
+      - 1.jpg
+      - 2.jpg
+- valid 
+   - NameClass1
+      - 1.jpg
+      - 2.jpg
+      - train
+   - NameClass2
+      - 1.jpg
+      - 2.jpg
+- test 
+   - NameClass1
+      - 1.jpg
+      - 2.jpg
+      - train
+   - NameClass2
+      - 1.jpg
+      - 2.jpg
+
+```
+- Link data: https://drive.google.com/file/d/1ZgDkSPyIgi0PQ9PSm4O8uyL3DSC5b2Pe/view?usp=sharing
 ### Args:
     model (str): Path of model. Default: ./Model/WATT-EffNet.pt
     train_dir (str): Path of training data. Default: ./data_classify/train
