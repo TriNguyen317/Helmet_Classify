@@ -12,6 +12,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np 
+import cv2
 
 # nvidia-smi -l
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -201,9 +202,11 @@ def Test_model(args, model, test_data):
 def Test_image(args, model, test_img):
     pred = model(test_img.to(device))
     output = nn.Softmax(dim=1)(pred)[0]
-    print(pred)
     _, classes = torch.max(output,dim=0)
     res = "Helmet" if classes==1 else "No-helmet" 
+    # img = test_img.reshape(52,52,3).cpu().numpy()
+    # cv2.putText(img,res,(5,5),cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 0, 0), 1, cv2.LINE_AA)
+    # cv2.imwrite("Predict.jpg",img)
     print("Result: ", res)
 
 if __name__ == "__main__":
@@ -220,8 +223,9 @@ if __name__ == "__main__":
         lr (float): Learning rate. Default: 0.0001
         momentum (float): Momentum for optimizer. Default: 0.8
         train (bool): Task is training. Default: False
-        test_model (bool): Task is testing. Default: False
-        test_model (bool): Task is testing. Default: False
+        test (bool): Task is testing. Default: False
+        classify (bool): Task is testing. Default: False
+        image (str): Path of image. Default: 1.jpg
     """
     parser = argparse.ArgumentParser(prog="Helmet_classify", 
                                      epilog='Text at the bottom of help')

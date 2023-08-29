@@ -39,7 +39,6 @@ This project focuses o helmet classify in images and videos using computer visio
    - NameClass1
       - 1.jpg
       - 2.jpg
-      - train
    - NameClass2
       - 1.jpg
       - 2.jpg
@@ -47,7 +46,6 @@ This project focuses o helmet classify in images and videos using computer visio
    - NameClass1
       - 1.jpg
       - 2.jpg
-      - train
    - NameClass2
       - 1.jpg
       - 2.jpg
@@ -55,7 +53,6 @@ This project focuses o helmet classify in images and videos using computer visio
    - NameClass1
       - 1.jpg
       - 2.jpg
-      - train
    - NameClass2
       - 1.jpg
       - 2.jpg

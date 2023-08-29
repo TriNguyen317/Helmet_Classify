@@ -11,7 +11,6 @@ class Spatial_Attention(nn.Module):
     
     def forward(self,input):
         
-        
         cbam_feature = torch.cat((self.GMaxPool(input,1),self.GAvgPool(input,1)),1)
         cbam_feature = self.Conv2D_1(cbam_feature)
         output = cbam_feature * input
