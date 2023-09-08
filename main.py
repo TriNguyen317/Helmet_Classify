@@ -17,7 +17,7 @@ import cv2
 # nvidia-smi -l
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
+# WATT_EffiNet model
 class WATT_EffiNet(torch.nn.Module):
     def __init__(self, expansion = 6) -> None:
         super(WATT_EffiNet, self).__init__()
@@ -78,7 +78,7 @@ class WATT_EffiNet(torch.nn.Module):
                  
         return output
 
-
+# Load data with batch-size
 class CustomDataset(object):
     def __init__(self, train_dir, val_dir, test_dir, img_size = (224,224), n_classes = 2):
         # ''' default_transform = transforms.Compose([
@@ -109,8 +109,9 @@ class CustomDataset(object):
         print('Data loaded!')
         return train_loader, val_loader, test_loader
 
+# ___Training function___
 def Training_model(args, model, train_data, valid_data):
-    
+    # Read data
     num_train = len(train_data.dataset.targets)
     num_val = len(valid_data.dataset.targets)
     num_epochs = args.epochs
@@ -119,6 +120,8 @@ def Training_model(args, model, train_data, valid_data):
     best_accuracy = 0.9
     a_epochs = []
     a_accuracy =[]
+    
+    # Start training 
     for epoch in range(num_epochs):
         print("-----Epoch %d-----:" %(epoch+1)) 
         running_loss = 0.0
@@ -143,6 +146,7 @@ def Training_model(args, model, train_data, valid_data):
                 pbar.update(min(args.batch_size,num_train-pbar.n))
             Avg_loss = running_loss/num_train
             # print('Epoch [%d] loss: %.3f' %(epoch + 1, Avg_loss))
+        
         with tqdm(total=num_val, ncols=100) as pbar:   
             running_loss = 0.0
             model.eval()
@@ -166,8 +170,8 @@ def Training_model(args, model, train_data, valid_data):
             a_epochs.append(epoch)
             a_accuracy.append(accuracy)
             
+            # Save plot 
             plt.plot(a_epochs, a_accuracy)
-            
             plt.xlabel('Epoch')
             plt.ylabel('Accuracy')
             plt.savefig('./Result/Result.png')
@@ -179,6 +183,7 @@ def Training_model(args, model, train_data, valid_data):
               print("----Best state----")
     print('Finished Training')
 
+# ___ Testing model ___
 def Test_model(args, model, test_data):
     num_test = len(test_data.dataset.targets)
     num_right_label = 0
@@ -199,6 +204,7 @@ def Test_model(args, model, test_data):
     accuracy = num_right_label/num_test
     print("Accuracy: ", accuracy)
 
+# ___ Testing Image ___
 def Test_image(args, model, test_img):
     pred = model(test_img.to(device))
     output = nn.Softmax(dim=1)(pred)[0]
@@ -254,12 +260,13 @@ if __name__ == "__main__":
     parser.add_argument("--test", type=bool, action=argparse.BooleanOptionalAction,
                 default=False, help="Test model by test_dir")
     parser.add_argument("--classify", type=bool, action=argparse.BooleanOptionalAction,
-                default=True, help="Classify image")
+                default=False, help="Classify image")
     parser.add_argument("--image", type=str,
                 default="1.jpg", help="Task is classify image")
 
     args = parser.parse_args()
     
+    #Load model
     model = torch.load(args.model)
     if args.checkpoint != "":
         model.load_state_dict(torch.load(args.checkpoint).state_dict(),strict=True)
@@ -275,6 +282,7 @@ if __name__ == "__main__":
         
     model.to(device)
     State = "-----Training-----" if args.train else "-----Testing-----"
+    
     print("State: ", State)
     if args.train:
         Training_model(args, model, train_data, valid_data)
@@ -284,7 +292,7 @@ if __name__ == "__main__":
         resized_image = image.resize(resize)
         image = torch.tensor(np.array(resized_image),dtype=torch.float).reshape((1,3,resize[0], resize[1]))
         Test_image(args,model,image)
-    else:
+    elif args.test:
         Test_model(args, model, test_data)
         
     
